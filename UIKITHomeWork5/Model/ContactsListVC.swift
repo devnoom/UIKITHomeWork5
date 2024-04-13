@@ -15,17 +15,24 @@ class ContactsListVC: UIViewController {
     var contactsDictionary = [String: [Contacts]]()
     var contactSections = [String]()
     let profileImageView: UIImageView = {
-           let imageView = UIImageView(image: UIImage(named: "Avatar1")) // Set your image here
+           let imageView = UIImageView(image: UIImage(named: "Avatar1"))
            imageView.contentMode = .scaleAspectFit
            return imageView
        }()
     let profileNameLabel: UILabel = {
             let label = UILabel()
-            label.text = "IOS SQUAD"// Set your name here
+            label.text = "IOS SQUAD"
             label.font = UIFont.systemFont(ofSize: 17, weight: .semibold)
             label.textAlignment = .center
             return label
         }()
+    let alphabetStackView: UIStackView = {
+           let stackView = UIStackView()
+           stackView.axis = .vertical
+           stackView.alignment = .center
+        stackView.spacing = 0.1
+           return stackView
+       }()
     
     struct Cells {
         static let ContactCell = "ContactCell"
@@ -37,8 +44,33 @@ class ContactsListVC: UIViewController {
         configureNavigationBar()
         configurateTableView()
         fetchDataAndConfigureSections()
+        configureAlphabetStackView()
     }
-    
+    func configureAlphabetStackView() {
+            view.addSubview(alphabetStackView)
+            alphabetStackView.translatesAutoresizingMaskIntoConstraints = false
+            NSLayoutConstraint.activate([
+                alphabetStackView.topAnchor.constraint(equalTo: view.topAnchor, constant: 130),
+                alphabetStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -2),
+                alphabetStackView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -100)
+            ])
+         
+            for letter in "ABCDEFGHIJKLMNOPQRSTUVWXYZ" {
+                let button = UIButton(type: .system)
+                button.setTitle("\(letter)", for: .normal)
+                button.titleLabel?.font = UIFont.systemFont(ofSize: 9)
+                button.addTarget(self, action: #selector(alphabetButtonTapped(_:)), for: .touchUpInside)
+                alphabetStackView.addArrangedSubview(button)
+            }
+        }
+        
+    @objc func alphabetButtonTapped(_ sender: UIButton) {
+        guard let letter = sender.titleLabel?.text else { return }
+        if let section = contactSections.firstIndex(of: letter) {
+            let indexPath = IndexPath(row: 0, section: section)
+            tableView.scrollToRow(at: indexPath, at: .top, animated: true)
+        }
+    }
     func configureNavigationBar() {
         
            let titleView = UIView(frame: CGRect(x: 0, y: 0, width: 400, height: 44))
@@ -148,7 +180,7 @@ extension ContactsListVC {
         let con18 = Contacts(image: Images.avatar2, FullName: "sandro gelashvili", age: "25", gender: "male", hobby: "digital music production");
         let con19 = Contacts(image: Images.avatar2, FullName: "ana namgaladze", age: "21", gender: "female", hobby: "photographing street fashion");
         let con20 = Contacts(image: Images.avatar2, FullName: "bakar kharabadze", age: "30", gender: "male", hobby: "mountain biking");
-        let con21 = Contacts(image: Images.avatar2, FullName: "archil menabde", age: "27", gender: "male", hobby: "crafting handmade pottery");
+        let con21 = Contacts(image: Images.avatar2, FullName: "beqa tabunidze", age: "27", gender: "male", hobby: "crafting handmade pottery");
         let con22 = Contacts(image: Images.avatar2, FullName: "tamuna kakhidze", age: "22", gender: "female", hobby: "volunteering at animal shelters");
         let con23 = Contacts(image: Images.avatar2, FullName: "giorgi michitashvili", age: "23", gender: "male", hobby: "bird watching");
         let con24 =  Contacts(image: Images.avatar2, FullName: "salome topuria", age: "23", gender: "female", hobby: "yoga and meditation");

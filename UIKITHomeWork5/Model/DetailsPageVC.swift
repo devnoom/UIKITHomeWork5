@@ -1,124 +1,109 @@
 import UIKit
 
 class DetailsPageVC: UIViewController {
-    @IBOutlet weak var profileImageView: UIImageView!
-    @IBOutlet weak var nameLabel: UILabel!
-    @IBOutlet weak var ageLabel: UILabel!
-    @IBOutlet weak var genderLabel: UILabel!
-    @IBOutlet weak var hobbyLabel: UILabel!
+    var profileImageView = UIImageView()
+    var nameLabel = UILabel()
+    var ageLabel = UILabel()
+    var genderLabel = UILabel()
+    var hobbyLabel =  UILabel()
     
-    var contact: Contacts? // This will hold the selected contact object
+    var contact: Contacts?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Make sure contact is not nil before setting labels
+        style()
+      
+        
+    }
+    func style() {
+        view.backgroundColor = .lightGray
+        let topStackView = UIStackView()
+        topStackView.axis = .vertical
+        topStackView.alignment = .center
+        topStackView.spacing = 10
+        topStackView.backgroundColor = .black
+        
+        profileImageView.clipsToBounds = true
+        profileImageView.layer.cornerRadius = 75 / 2
+        profileImageView.contentMode = .scaleAspectFill
+        profileImageView.translatesAutoresizingMaskIntoConstraints = false
+        profileImageView.widthAnchor.constraint(equalToConstant: 75).isActive = true
+        profileImageView.heightAnchor.constraint(equalToConstant: 75).isActive = true
+        
+        
+        
+        
+        let profileImageViewContainer = UIView()
+        profileImageViewContainer.addSubview(profileImageView)
+        topStackView.addArrangedSubview(profileImageViewContainer)
+        
+        nameLabel.font = UIFont.boldSystemFont(ofSize: 20)
+        nameLabel.textColor = .white
+        
+        topStackView.addArrangedSubview(nameLabel)
+        
+        view.addSubview(topStackView)
+        topStackView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            topStackView.topAnchor.constraint(equalTo: view.topAnchor),
+            topStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            topStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            topStackView.heightAnchor.constraint(equalToConstant: 300)
+        ])
+        
+        let tableView = UITableView()
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.layer.borderWidth = 0.2
+        tableView.layer.cornerRadius = 20
+        view.addSubview(tableView)
+        NSLayoutConstraint.activate([
+            tableView.topAnchor.constraint(equalTo: topStackView.bottomAnchor, constant: 20),
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -320)
+        ])
+        
+        // Load data
         if let contact = contact {
             nameLabel.text = contact.FullName
-            ageLabel.text = contact.age
-            genderLabel.text = contact.gender
-            hobbyLabel.text = contact.hobby
-            // Check if contact.image is not nil before setting profileImageView.image
-            if let image = contact.image {
-                profileImageView.image = image // Set profileImageView.image to the unwrapped image
-            } else {
-                // Handle the case where contact.image is nil, maybe set a default image
-                profileImageView.image = UIImage(named: "defaultImage") // Provide the name of your default image
-            }
+            ageLabel.text = "Age: \(contact.age)"
+            genderLabel.text = "Gender: \(contact.gender)"
+            hobbyLabel.text = "Hobby: \(contact.hobby)"
+            profileImageView.image = contact.image
         }
     }
 
-
 }
 
+extension DetailsPageVC: UITableViewDelegate, UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 3
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = UITableViewCell(style: .value1, reuseIdentifier: nil)
+        cell.textLabel?.font = UIFont.systemFont(ofSize: 16)
+        
+        switch indexPath.row {
+        case 0:
+            cell.textLabel?.text = "Gender"
+            cell.detailTextLabel?.text = contact?.gender
+        case 1:
+            cell.textLabel?.text = "Age"
+            cell.detailTextLabel?.text = contact?.age
+        case 2:
+            cell.textLabel?.text = "Hobby"
+            cell.detailTextLabel?.text = contact?.hobby
+        default:
+            break
+        }
+        
+        return cell
+    }
+}
 
-
-
-
-////
-////  DetailsPageVC.swift
-////  UIKITHomeWork5
-////
-////  Created by MacBook Air on 12.04.24.
-////
-//import UIKit
-//
-//class DetailsPageVC: UIViewController {
-//    var contact: Contacts?
-//    override func viewDidLoad() {
-//        super.viewDidLoad()
-//        setupUI()
-//        
-//    }
-//    
-//    func setupUI() {
-//        // Creating the main view with gray background
-//        let mainView = UIView()
-//        mainView.backgroundColor = .gray
-//        view.addSubview(mainView)
-//        mainView.translatesAutoresizingMaskIntoConstraints = false
-//        
-//        NSLayoutConstraint.activate([
-//            mainView.topAnchor.constraint(equalTo: view.topAnchor),
-//            mainView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-//            mainView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-//            mainView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-//        ])
-//        
-//        // Adding a stack view for the central image and label
-//        let centralStackView = UIStackView()
-//        centralStackView.axis = .vertical
-//        centralStackView.alignment = .center
-//        centralStackView.spacing = 10
-//        mainView.addSubview(centralStackView)
-//        centralStackView.translatesAutoresizingMaskIntoConstraints = false
-//        
-//        let imageView = UIImageView(image: UIImage(named: "Avatar1"))
-//        centralStackView.addArrangedSubview(imageView)
-//        
-//        let label = UILabel()
-//        label.text = "Your Label Text"
-//        label.textColor = .white
-//        centralStackView.addArrangedSubview(label)
-//        
-//        // Adding a stack view for the three lines of information
-//        let infoStackView = UIStackView()
-//        infoStackView.axis = .vertical
-//        infoStackView.alignment = .leading
-//        infoStackView.spacing = 5
-//        mainView.addSubview(infoStackView)
-//        infoStackView.translatesAutoresizingMaskIntoConstraints = false
-//        
-//        var infoLabelLeft: [UILabel] = []
-//        var infoLabelRight: [UILabel] = []
-//        
-//        // Add your information labels to the stack view
-//        for _ in 0..<3 {
-//            let leftLabel = UILabel()
-//            leftLabel.textColor = .white
-//            
-//            let rightLabel = UILabel()
-//            rightLabel.textColor = .white
-//            
-//            let lineStackView = UIStackView(arrangedSubviews: [leftLabel, rightLabel])
-//            lineStackView.axis = .horizontal
-//            lineStackView.spacing = 10
-//            infoStackView.addArrangedSubview(lineStackView)
-//            
-//            // Append the labels to the arrays
-//            infoLabelLeft.append(leftLabel)
-//            infoLabelRight.append(rightLabel)
-//        }
-//        
-//        NSLayoutConstraint.activate([
-//            centralStackView.centerXAnchor.constraint(equalTo: mainView.centerXAnchor),
-//            centralStackView.topAnchor.constraint(equalTo: mainView.topAnchor, constant: 100),
-//            infoStackView.topAnchor.constraint(equalTo: centralStackView.bottomAnchor, constant: 50),
-//            infoStackView.leadingAnchor.constraint(equalTo: mainView.leadingAnchor, constant: 20),
-//            infoStackView.trailingAnchor.constraint(equalTo: mainView.trailingAnchor, constant: -20)
-//        ])
-//    }
-//    
-//}
-//
-//
-//
+#Preview {
+    DetailsPageVC()
+}
